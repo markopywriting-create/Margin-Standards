@@ -37,7 +37,6 @@ const storeSet = async(k,v)=>{
 const storeGet = async(k)=>{
   try{const{data}=await supabase.from("kv_store").select("value").eq("key",k).single();return data?JSON.parse(data.value):null;}catch(e){return null;}
 };
-const storeGet = async(k,sh=true)=>{try{const r=await window.storage.get(k,sh);return r?JSON.parse(r.value):null;}catch(e){return null;}};
 
 const COLS = [
   {key:"slot",           label:"#",            w:32,  type:"index", group:"POST"},
