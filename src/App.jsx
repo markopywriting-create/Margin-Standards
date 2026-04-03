@@ -138,7 +138,7 @@ function DetailsPanel({post, onChange, readOnly, rowBg}) {
     setLoadingSnap(periodKey);
     try {
       const b64 = await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file);});
-      const resp = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/png",data:b64}},{type:"text",text:'Extract LinkedIn post stats. Return ONLY JSON: {"impressions":number,"membersReached":number,"reactions":number,"comments":number,"reposts":number,"saves":number,"sends":number}'}]}]})});
+      const resp = await fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/png",data:b64}},{type:"text",text:'Extract LinkedIn post stats. Return ONLY JSON: {"impressions":number,"membersReached":number,"reactions":number,"comments":number,"reposts":number,"saves":number,"sends":number}'}]}]})});
       const d=await resp.json();
       const txt=d.content?.find(b=>b.type==="text")?.text||"{}";
       const p=JSON.parse(txt.replace(/```json|```/g,"").trim());
@@ -152,7 +152,7 @@ function DetailsPanel({post, onChange, readOnly, rowBg}) {
     setLoadingDemo(true);
     try {
       const b64 = await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file);});
-      const resp = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/png",data:b64}},{type:"text",text:'Extract job title demographics from this LinkedIn analytics screenshot. Return ONLY JSON: {"items":[{"title":"Software Engineer","pct":13.8},{"title":"Founder","pct":4.4},...]}'}]}]})});
+      const resp = await fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/png",data:b64}},{type:"text",text:'Extract job title demographics from this LinkedIn analytics screenshot. Return ONLY JSON: {"items":[{"title":"Software Engineer","pct":13.8},{"title":"Founder","pct":4.4},...]}'}]}]})});
       const d=await resp.json();
       const txt=d.content?.find(b=>b.type==="text")?.text||"{}";
       const p=JSON.parse(txt.replace(/```json|```/g,"").trim());
@@ -294,7 +294,7 @@ function TrackerTable({posts, onUpdate, readOnly}) {
     setPasteLoadSlot(ri);
     try {
       const b64 = await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file);});
-      const resp = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:600,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/png",data:b64}},{type:"text",text:'Look at this LinkedIn analytics screenshot. Determine if it shows (A) post performance stats or (B) job title demographics. Return ONLY JSON:\n\nIf post stats: {"type":"stats","impressions":number,"membersReached":number,"profileViewers":number,"followersGained":number,"reactions":number,"comments":number,"reposts":number,"saves":number,"sends":number}\n\nIf job titles: {"type":"demographics","items":[{"title":"Software Engineer","pct":13.8},...]}'}]}]})});
+      const resp = await fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:600,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/png",data:b64}},{type:"text",text:'Look at this LinkedIn analytics screenshot. Determine if it shows (A) post performance stats or (B) job title demographics. Return ONLY JSON:\n\nIf post stats: {"type":"stats","impressions":number,"membersReached":number,"profileViewers":number,"followersGained":number,"reactions":number,"comments":number,"reposts":number,"saves":number,"sends":number}\n\nIf job titles: {"type":"demographics","items":[{"title":"Software Engineer","pct":13.8},...]}'}]}]})});
       const d = await resp.json();
       const txt = d.content?.find(b=>b.type==="text")?.text||"{}";
       const p = JSON.parse(txt.replace(/```json|```/g,"").trim());
@@ -337,7 +337,7 @@ function TrackerTable({posts, onUpdate, readOnly}) {
     setLoadSlot(ri);
     try {
       const b64 = await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file);});
-      const resp = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:600,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/png",data:b64}},{type:"text",text:'Extract LinkedIn post stats. Return ONLY JSON: {"impressions":number,"membersReached":number,"profileViewers":number,"followersGained":number,"reactions":number,"comments":number,"reposts":number,"saves":number,"sends":number}'}]}]})});
+      const resp = await fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:600,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/png",data:b64}},{type:"text",text:'Extract LinkedIn post stats. Return ONLY JSON: {"impressions":number,"membersReached":number,"profileViewers":number,"followersGained":number,"reactions":number,"comments":number,"reposts":number,"saves":number,"sends":number}'}]}]})});
       const d = await resp.json();
       const txt = d.content?.find(b=>b.type==="text")?.text||"{}";
       const p = JSON.parse(txt.replace(/```json|```/g,"").trim());
@@ -355,7 +355,7 @@ function TrackerTable({posts, onUpdate, readOnly}) {
     setLoadDemoSlot(ri);
     try {
       const b64 = await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file);});
-      const resp = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/png",data:b64}},{type:"text",text:'Extract job title demographics from this LinkedIn analytics screenshot. Return ONLY JSON: {"items":[{"title":"Software Engineer","pct":13.8},{"title":"Founder","pct":4.4},...]} Include all visible job titles with their percentages.'}]}]})});
+      const resp = await fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/png",data:b64}},{type:"text",text:'Extract job title demographics from this LinkedIn analytics screenshot. Return ONLY JSON: {"items":[{"title":"Software Engineer","pct":13.8},{"title":"Founder","pct":4.4},...]} Include all visible job titles with their percentages.'}]}]})});
       const d = await resp.json();
       const txt = d.content?.find(b=>b.type==="text")?.text||"{}";
       const p = JSON.parse(txt.replace(/```json|```/g,"").trim());
