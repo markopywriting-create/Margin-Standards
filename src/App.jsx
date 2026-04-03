@@ -26,7 +26,17 @@ const calcRow = r => {
   return {...r, reachRate:imp>0?((parseFloat(r.membersReached)||0)/imp*100).toFixed(1)+"%":"", engRate:imp>0?(eng/imp*100).toFixed(2)+"%":""};
 };
 
-const storeSet = async(k,v,sh=true)=>{try{await window.storage.set(k,JSON.stringify(v),sh);}catch(e){}};
+import { createClient } from "@supabase/supabase-js";
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
+const storeSet = async(k,v)=>{
+  try{await supabase.from("kv_store").upsert({key:k,value:JSON.stringify(v)});}catch(e){}
+};
+const storeGet = async(k)=>{
+  try{const{data}=await supabase.from("kv_store").select("value").eq("key",k).single();return data?JSON.parse(data.value):null;}catch(e){return null;}
+};
 const storeGet = async(k,sh=true)=>{try{const r=await window.storage.get(k,sh);return r?JSON.parse(r.value):null;}catch(e){return null;}};
 
 const COLS = [
