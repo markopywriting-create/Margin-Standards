@@ -1648,7 +1648,7 @@ function Dashboard({client, readOnly, onBack}) {
       <div style={{background:SURF,borderBottom:`1px solid ${BRD}`,padding:isMobile?"12px 16px 0":"16px 24px 0"}}>
         <div style={{display:"flex",alignItems:isMobile?"flex-start":"center",justifyContent:"space-between",flexWrap:"wrap",gap:10,paddingBottom:12}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <button className="btn btn-ghost btn-sm" onClick={onBack}>← Back</button>
+            {!isClientRoute && <button className="btn btn-ghost btn-sm" onClick={onBack}>← Back</button>}
             <div style={{width:1,height:20,background:BRD}}/>
             <div>
               <div style={{fontSize:isMobile?14:16,fontWeight:700,color:DARK}}>{client.name}</div>
@@ -1930,8 +1930,8 @@ function Landing({onAdmin, onClient}) {
 
 // ─── Root ─────────────────────────────────────────────────────────────────────
 export default function App() {
-  const isClientRoute = typeof window!=="undefined" && window.location.pathname.startsWith("/client");
-  const [screen,setScreen]           = useState(isClientRoute ? "client" : "landing");
+  const isClientRoute = window.location.pathname.startsWith("/client");
+  const [screen,setScreen] = useState(isClientRoute ? "client" : "landing");
   const [adminAuthed,setAdminAuthed] = useState(false);
   return (
     <>
