@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LabelList } from "recharts";
 import { createClient } from "@supabase/supabase-js";
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
