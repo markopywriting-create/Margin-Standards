@@ -1,5 +1,14 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LabelList } from "recharts";
+import { createClient } from "@supabase/supabase-js";
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
+const storeSet = async(k,v)=>{
+  try{await supabase.from("kv_store").upsert({key:k,value:JSON.stringify(v)});}catch(e){}
+};
+const storeGet = async(k)=>{
+  try{const{data}=await supabase.from("kv_store").select("value").eq("key",k).single();return data?JSON.parse(data.value):null;}catch(e){return null;}
+};
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const PER_MONTH = 20;
@@ -40,10 +49,6 @@ function useIsMobile() {
   return isMobile;
 }
 
-// ⚠️ PREVIEW ONLY — in-memory store (Supabase used in production)
-const _mem = {};
-const storeSet = async(k,v)=>{ _mem[k]=JSON.stringify(v); };
-const storeGet = async(k)=>{ try{ return _mem[k]?JSON.parse(_mem[k]):null; }catch(e){return null;} };
 
 const COLS = [
   {key:"slot",           label:"#",            w:32,  type:"index", group:"POST"},
@@ -1253,7 +1258,7 @@ function ContentCard({item, readOnly, onUpdate, onDelete, displayName, tagline})
 
   const statusColor = {pending:"#B07A00",approved:T,rejected:"#c03c3c",draft:DIM}[item.status]||DIM;
   const statusBg    = {pending:"#FFF8E7",approved:TLIGHT,rejected:"#FEF0F0",draft:"#f4f0ee"}[item.status]||"#f4f0ee";
-  const statusLabel = {pending:"Awaiting Approval",approved:"Approved ✓",rejected:"Changes Requested",draft:"Draft"}[item.status]||"Draft";
+  const statusLabel = {pending:"Awaiting Approval",approved:"Approved ✓",rejected:"Changes Requested — Edit & Resubmit",draft:"Draft"}[item.status]||"Draft";
 
   const toBase64 = f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f);});
 
@@ -1292,6 +1297,8 @@ function ContentCard({item, readOnly, onUpdate, onDelete, displayName, tagline})
           {item.status==="draft"&&<button onClick={()=>onUpdate({status:"pending"})} className="btn btn-primary" style={{padding:"3px 10px",fontSize:10}}>Send for Approval</button>}
           {item.status==="pending"&&<button onClick={()=>onUpdate({status:"draft"})} style={{padding:"3px 8px",fontSize:10,background:"none",border:`1px solid ${BRD}`,borderRadius:5,cursor:"pointer",color:DIM,fontFamily:"DM Sans"}}>Recall</button>}
           {item.status==="approved"&&<button onClick={()=>onUpdate({status:"draft"})} style={{padding:"3px 8px",fontSize:10,background:"none",border:`1px solid ${BRD}`,borderRadius:5,cursor:"pointer",color:DIM,fontFamily:"DM Sans"}}>Reopen</button>}
+          {item.status==="rejected"&&<button onClick={()=>onUpdate({status:"pending",clientComment:item.clientComment})} className="btn btn-primary" style={{padding:"3px 10px",fontSize:10}}>↺ Resubmit for Approval</button>}
+          {item.status==="rejected"&&<button onClick={()=>onUpdate({status:"draft"})} style={{padding:"3px 8px",fontSize:10,background:"none",border:`1px solid ${BRD}`,borderRadius:5,cursor:"pointer",color:DIM,fontFamily:"DM Sans"}}>Back to Draft</button>}
           <button onClick={()=>onDelete()} style={{padding:"3px 8px",fontSize:10,background:"none",border:"1px solid rgba(200,60,60,0.2)",borderRadius:5,cursor:"pointer",color:"#c03c3c",fontFamily:"DM Sans"}}>Delete</button>
         </div>}
       </div>
